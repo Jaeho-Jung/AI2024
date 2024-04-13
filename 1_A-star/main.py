@@ -1,8 +1,8 @@
 import pygame
 from pygame.locals import *
-from pgu import gui
-import sys
+# from pgu import gui
 import numpy as np
+import sys
 
 from constant import *
 
@@ -13,10 +13,13 @@ pygame.init()
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("A-star Algorithm")
 
-cell = [ [0]*N for _ in range(M)]
-start_pos, goal_pos = (0, 0), (M-1, N-1)
-cell[start_pos[0]][start_pos[1]] = 's'
-cell[goal_pos[0]][goal_pos[1]] = 'g'
+def init_grid():
+    global cell, start_pos, goal_pos
+
+    cell = [ [Cell.BLANK]*N for _ in range(M)]
+    start_pos, goal_pos = (0, 0), (M-1, N-1)
+    cell[start_pos[0]][start_pos[1]] = Cell.START
+    cell[goal_pos[0]][goal_pos[1]] = Cell.GOAL
 
 def draw_grid():
     for x in range(0, GRID_WIDTH+1, CELL_WIDTH):
@@ -27,14 +30,7 @@ def draw_grid():
 def draw_cells():
     for i in range(M):
         for j in range(N):
-            if cell[i][j] == 0:
-                color = Color.WHITE
-            elif cell[i][j] == 1:
-                color = Color.GRAY
-            elif cell[i][j] == 's':
-                color = Color.RED
-            elif cell[i][j] == 'g':
-                color = Color.GREEN
+            color = cell_to_color[cell[i][j]]
             pygame.draw.rect(screen, color, (j * CELL_WIDTH+1, i * CELL_HEIGHT+1, CELL_WIDTH-1, CELL_HEIGHT-1))
 
 def draw_text():
@@ -61,33 +57,25 @@ def set_obstacles_randomly():
 
     num_cells = M*N
     # -2: start, goal
-    num_obstacles = num_cells*INC_OBSTACLE_RATIO - 2
+    num_obstacles = num_cells*INC_OBSTACLE_RATIO-2
 
     obstacles = randbool(num_cells, num_obstacles)
 
     idx = 0
     for i in range(M):
         for j in range(N):
-            if cell[i][j] in ['s', 'g']:
+            if cell[i][j] in [Cell.START, Cell.GOAL]:
                 continue
             cell[i][j] = int(obstacles[idx])
             idx += 1
 
-
-
-
 def start_search():
     pass
 
-def init_cell():
-    global cell
-    cell = [ [0]*N for _ in range(M)]
-    start_pos, goal_pos = (0, 0), (M-1, N-1)
-    cell[start_pos[0]][start_pos[1]] = 's'
-    cell[goal_pos[0]][goal_pos[1]] = 'g'
-
 def main():
     running = True
+
+    init_grid()
 
     # app = gui.App()
     # container = gui.Container(width=600, height=100)
@@ -121,7 +109,7 @@ def main():
                 if event.key == pygame.K_RETURN:
                     start_search()
                 if event.key == pygame.K_r:
-                    init_cell()
+                    init_grid()
         # app.paint(screen)
         pygame.display.flip()
 

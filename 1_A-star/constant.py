@@ -14,9 +14,22 @@ WINDOW_WIDTH, WINDOW_HEIGHT = 700, 700
 GRID_WIDTH, GRID_HEIGHT = 600, 600
 CELL_WIDTH, CELL_HEIGHT = GRID_WIDTH // N, GRID_HEIGHT // M
 
+class Cell():
+    BLANK = 0
+    OBSTACLE = 1
+    START = 2
+    GOAL = 3
+
 class Color():
     WHITE = (255, 255, 255)
     BLACK = (0, 0, 0)
     GRAY = (128, 128, 128)
     RED = (255, 0, 0)
     GREEN = (0, 0, 255)
+
+cell_to_color = {
+    Cell.BLANK: Color.WHITE,
+    Cell.OBSTACLE: Color.GRAY,
+    Cell.START: Color.RED,
+    Cell.GOAL: Color.GREEN,
+}
