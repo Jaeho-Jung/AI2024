@@ -1,4 +1,5 @@
 import argparse
+import numpy as np
 
 # Parse command line arguments
 parser = argparse.ArgumentParser(description="A-star Algorithm")
@@ -13,6 +14,8 @@ INC_OBSTACLE_RATIO = args.obs
 WINDOW_WIDTH, WINDOW_HEIGHT = 700, 700
 GRID_WIDTH, GRID_HEIGHT = 600, 600
 CELL_WIDTH, CELL_HEIGHT = GRID_WIDTH // N, GRID_HEIGHT // M
+
+INF = np.inf
 
 class Cell():
     BLANK = 0
