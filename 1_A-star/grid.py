@@ -1,12 +1,7 @@
 import pygame
 
 from constants import *
-from utils import rand_bool
-
-class Location2D:
-    def __init__(self, r=0, c=0):
-        self.r = r
-        self.c = c
+from utils import rand_bool, Location2D
 
 class Grid:
     def __init__(self):
