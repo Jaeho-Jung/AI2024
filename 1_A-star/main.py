@@ -55,10 +55,16 @@ def draw_cells():
 def draw_text():
     pass
 
+def is_valid(r, c):
+    return not (r<0 or c<0 or r>=M or c>=N)
+
 def toggle_cell(pos):
     x, y = pos
     i = y // CELL_HEIGHT
     j = x // CELL_WIDTH
+
+    if not is_valid(i, j):
+        return
 
     cell[i][j] = not cell[i][j]
 
@@ -89,10 +95,10 @@ def A_Star():
 def start_search():
     pass
 
-def reset():
+def init_cell():
     global cell
     cell = [ [0]*N for _ in range(M)]
-    start_pos, end_pos = (0, 0), (M-1, N-1)
+    start_pos, goal_pos = (0, 0), (M-1, N-1)
     cell[start_pos[0]][start_pos[1]] = 's'
     cell[goal_pos[0]][goal_pos[1]] = 'g'
 
@@ -131,7 +137,7 @@ def main():
                 if event.key == pygame.K_RETURN:
                     start_search()
                 if event.key == pygame.K_r:
-                    reset()
+                    init_cell()
         # app.paint(screen)
         pygame.display.flip()
 
