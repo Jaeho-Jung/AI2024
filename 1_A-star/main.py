@@ -56,6 +56,8 @@ def main():
                     start_search()
                 if event.key == pygame.K_r:
                     grid.init_grid()
+                if event.key == pygame.K_q:
+                    running = False
         # app.paint(screen)
         pygame.display.flip()
 
