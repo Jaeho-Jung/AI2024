@@ -14,8 +14,16 @@ pygame.init()
 screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("A-star Algorithm")
 
-def start_search():
-    pass
+def start_search(grid):
+    ret, cameFrom = grid.a_star()
+
+    if ret == True:
+        cur = cameFrom[grid.goal.r][grid.goal.c]
+        while cur != grid.start:
+            grid.cell[cur.r][cur.c] = Cell.PATH
+            cur = cameFrom[cur.r][cur.c]
+    # TODO: elif ret == False:
+
 
 def main():
     running = True
@@ -53,11 +61,13 @@ def main():
                 if event.key == pygame.K_SPACE:
                     grid.set_obstacles_randomly()
                 if event.key == pygame.K_RETURN:
-                    start_search()
+                    start_search(grid)
                 if event.key == pygame.K_r:
                     grid.init_grid()
                 if event.key == pygame.K_q:
                     running = False
+                if event.key == pygame.K_m:
+                    grid.toggle_dist_metric()
         # app.paint(screen)
         pygame.display.flip()
 
