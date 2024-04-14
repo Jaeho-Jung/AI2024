@@ -15,14 +15,17 @@ screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption("A-star Algorithm")
 
 def start_search(grid):
-    ret, cameFrom = grid.a_star()
+    ret, came_from, target, n_explored_nodes = grid.a_star()
 
     if ret == True:
-        cur = cameFrom[grid.goal.r][grid.goal.c]
-        while cur != grid.start:
-            grid.cell[cur.r][cur.c] = Cell.PATH
-            cur = cameFrom[cur.r][cur.c]
-    # TODO: elif ret == False:
+        print('Number of explored nodes: ' + str(n_explored_nodes))
+    elif ret == False:
+        print('Cannot find path')
+
+    cur = came_from[target.r][target.c]
+    while cur != grid.start:
+        grid.cell[cur.r][cur.c] = Cell.PATH
+        cur = came_from[cur.r][cur.c]
 
 
 def main():
@@ -67,6 +70,7 @@ def main():
                 if event.key == pygame.K_q:
                     running = False
                 if event.key == pygame.K_m:
+                    grid.clear_path()
                     grid.toggle_dist_metric()
         # app.paint(screen)
         pygame.display.flip()

@@ -15,6 +15,12 @@ class Grid:
         self.cell[self.start.r][self.start.c] = Cell.START
         self.cell[self.goal.r][self.goal.c] = Cell.GOAL
 
+    def clear_path(self):
+        for i in range(M):
+            for j in range(N):
+                if self.cell[i][j] == Cell.PATH:
+                    self.cell[i][j] = Cell.BLANK
+
     def draw_grid(self, screen):
         for x in range(0, GRID_WIDTH+1, CELL_WIDTH):
             pygame.draw.line(screen, Color.BLACK, (x, 0), (x, GRID_HEIGHT))
@@ -77,7 +83,7 @@ class Grid:
         frontier.put(Item(0, self.start))
 
         # For node n, came_from[n] is the node immediately preceding it on the cheapest path from the start to n currently known.
-        came_from = [[0]*M for _ in range(N)]
+        came_from = [[Location()]*M for _ in range(N)]
 
         # For node n, g_score[n] is the cost of the cheapest path from start to n currently known.
         g_score = [[INF]*M for _ in range(N)]
@@ -87,11 +93,16 @@ class Grid:
         f_score = [[INF]*M for _ in range(N)]
         f_score[self.start.r][self.start.c] = h[self.dist_metric](self.start, self.goal)
 
+        target = Location()
+        min_f = INF
+        n_explored_nodes = 0
         while not frontier.empty():
             cur = frontier.get().loc
-            print(cur.r, cur.c)
+
+            n_explored_nodes += 1
+
             if cur == self.goal:
-                return True, came_from
+                return True, came_from, self.goal, n_explored_nodes
             
             for d in directions:
                 nxt = Location(cur.r+d.r, cur.c+d.c)
@@ -104,7 +115,10 @@ class Grid:
                     came_from[nxt.r][nxt.c] = cur
                     g_score[nxt.r][nxt.c] = tentative_g_score
                     f_score[nxt.r][nxt.c] = tentative_g_score + h[self.dist_metric](nxt, self.goal)
-                    # frontier.put((f_score[nxt.r][nxt.c], nxt))
+                    
+                    if min_f > f_score[nxt.r][nxt.c]:
+                        target = nxt
+
                     frontier.put(Item(f_score[nxt.r][nxt.c], nxt))
 
-        return False, None
+        return False, came_from, target, None
