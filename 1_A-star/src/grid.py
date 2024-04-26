@@ -5,57 +5,44 @@ from constants import *
 from utils import rand_bool, Location, directions, h
 
 class Grid:
-    def __init__(self):
+    def __init__(self, m: int, n: int, obs_ratio: float):
+        self.m = m
+        self.n = n
+        self.obs_ratio = obs_ratio
         self.init_grid()
         self.dist_metric = Distance.EUCLIDEAN
 
     def init_grid(self):
-        self.cell = [ [Cell.BLANK]*N for _ in range(M)]
-        self.start, self.goal = Location(0, 0), Location(M-1, N-1)
+        self.cell = [ [Cell.BLANK]*self.n for _ in range(self.m)]
+        self.start, self.goal = Location(0, 0), Location(self.m-1, self.n-1)
         self.cell[self.start.r][self.start.c] = Cell.START
         self.cell[self.goal.r][self.goal.c] = Cell.GOAL
 
     def clear_path(self):
-        for i in range(M):
-            for j in range(N):
+        for i in range(self.m):
+            for j in range(self.n):
                 if self.cell[i][j] == Cell.PATH:
                     self.cell[i][j] = Cell.BLANK
 
-    def draw_grid(self, screen):
-        for x in range(0, GRID_WIDTH+1, CELL_WIDTH):
-            pygame.draw.line(screen, Color.BLACK, (x, 0), (x, GRID_HEIGHT))
-        for y in range(0, GRID_HEIGHT+1, CELL_HEIGHT):
-            pygame.draw.line(screen, Color.BLACK, (0, y), (GRID_WIDTH, y))
-
-    def draw_cells(self, screen):
-        for i in range(M):
-            for j in range(N):
-                color = cell_to_color[self.cell[i][j]]
-                pygame.draw.rect(screen, color, (j * CELL_WIDTH+1, i * CELL_HEIGHT+1, CELL_WIDTH-1, CELL_HEIGHT-1))
-
-    def draw_text(self):
-        pass
-
-    def toggle_cell(self, pos):
-        x, y = pos
-        i = y // CELL_HEIGHT
-        j = x // CELL_WIDTH
-
-        if not self.is_valid(Location(i, j)):
+    def toggle_cell(self, loc: Location):
+        if not self.is_valid(loc):
             return
-
-        self.cell[i][j] = not self.cell[i][j]
+        
+        if self.cell[loc.r][loc.c] in {Cell.BLANK, Cell.PATH}:
+            self.cell[loc.r][loc.c] = Cell.OBSTACLE
+        elif self.cell[loc.r][loc.c] == Cell.OBSTACLE:
+            self.cell[loc.r][loc.c] = Cell.BLANK
 
     def set_obstacles_randomly(self):
-        num_cells = M*N
+        num_cells = self.m*self.n
         # -2: start, goal
-        num_obstacles = num_cells*INC_OBSTACLE_RATIO-2
+        num_obstacles = num_cells*self.obs_ratio-2
 
         obstacles = rand_bool(num_cells, num_obstacles)
 
         idx = 0
-        for i in range(M):
-            for j in range(N):
+        for i in range(self.m):
+            for j in range(self.n):
                 if self.cell[i][j] in [Cell.START, Cell.GOAL]:
                     continue
                 self.cell[i][j] = int(obstacles[idx])
@@ -68,7 +55,7 @@ class Grid:
             self.dist_metric = Distance.EUCLIDEAN
 
     def is_valid(self, loc):
-        return not (loc.r<0 or loc.c<0 or loc.r>=M or loc.c>=N) and self.cell[loc.r][loc.c] != Cell.OBSTACLE
+        return not (loc.r<0 or loc.c<0 or loc.r>=self.m or loc.c>=self.n)
 
     def a_star(self):
         class Item:
@@ -83,14 +70,14 @@ class Grid:
         frontier.put(Item(0, self.start))
 
         # For node n, came_from[n] is the node immediately preceding it on the cheapest path from the start to n currently known.
-        came_from = [[Location()]*M for _ in range(N)]
+        came_from = [[Location()]*self.m for _ in range(self.n)]
 
         # For node n, g_score[n] is the cost of the cheapest path from start to n currently known.
-        g_score = [[INF]*M for _ in range(N)]
+        g_score = [[INF]*self.m for _ in range(self.n)]
         g_score[self.start.r][self.start.c] = 0
 
         # For node n, f_score[n] := g_score[n] + h(n). f_score[n] represents our current best guess as to how cheap a path could be from start to finish if it goes through n.
-        f_score = [[INF]*M for _ in range(N)]
+        f_score = [[INF]*self.m for _ in range(self.n)]
         f_score[self.start.r][self.start.c] = h[self.dist_metric](self.start, self.goal)
 
         target = Location()
@@ -108,6 +95,8 @@ class Grid:
                 nxt = Location(cur.r+d.r, cur.c+d.c)
                 
                 if not self.is_valid(nxt):
+                    continue
+                if self.cell[nxt.r][nxt.c] == Cell.OBSTACLE:
                     continue
 
                 tentative_g_score = g_score[cur.r][cur.c] + 1

@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from constants import INF, M, N, Distance
+from constants import Distance
 
 class Location:
     def __init__(self, r=0, c=0):
