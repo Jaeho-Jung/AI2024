@@ -8,3 +8,12 @@ BLUE = Color((0, 0, 255))
 ORANGE = Color((255, 165, 0))
 WHITE = Color((255, 255, 255))
 YELLOW = Color((255, 255, 0))
+
+color_to_char = {
+    RED: 'R',
+    GREEN: 'G',
+    BLUE: 'B',
+    ORANGE: 'O',
+    WHITE: 'W',
+    YELLOW: 'Y',
+}

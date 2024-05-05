@@ -1,8 +1,8 @@
-from color import Color
+from color import *
 
-INIT_FACE_COLOR = [("U", Color.WHITE),
-                   ("F", Color.GREEN),
-                   ("L", Color.ORANGE),
-                   ("B", Color.BLUE),
-                   ("R", Color.RED),
-                   ("D", Color.YELLOW)]
+INIT_FACE_COLOR = [("U", WHITE),
+                   ("R", RED),
+                   ("F", GREEN),
+                   ("D", YELLOW),
+                   ("L", ORANGE),
+                   ("B", BLUE)]
