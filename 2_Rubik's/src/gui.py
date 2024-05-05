@@ -34,6 +34,7 @@ class Gui:
                     if key in {"u", "f", "l", "r", "d", "b"}:
                         self.cube._rotate(Move(key.upper(), prime))
                         self.draw_cube()
+                        print(self.cube.get_cubies())
                     if key == 'q':
                         running = False
             
