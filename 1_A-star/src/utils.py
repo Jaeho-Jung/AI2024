@@ -18,8 +18,6 @@ directions = [
 def rand_bool(l, n):
     return np.random.permutation(l) < n
 
-# h is the heuristic function. h(n) estimates the cost to reach goal from node n.
-# TODO: choose dist metric
 def dist_euclidean(loc1, loc2):
     return math.sqrt((loc1.r-loc2.r)**2 + (loc1.c-loc2.c)**2)
 

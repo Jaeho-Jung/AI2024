@@ -115,7 +115,6 @@ class Solver:
             self.solution.pop()
         return min_cost
 
-    # Solve Rubik's Cube
     def solve(self, cube: Cube):
         with open('solution.txt', 'w+') as f:
             f.write(str(self.ida_star(cube, self.heuristic_summation)))

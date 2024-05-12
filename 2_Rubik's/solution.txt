@@ -1,0 +1,2 @@
+[Move(face='F', invert=False), Move(face='L', invert=False), Move(face='U', invert=False), Move(face='R', invert=True), Move(face='B', invert=False), Move(face='L', invert=False), Move(face='U', invert=False), Move(face='B', invert=True)]
+[]
