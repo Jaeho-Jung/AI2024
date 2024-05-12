@@ -1,11 +1,9 @@
 import argparse
 import itertools
 import random
-from sys import argv
 
 from move import Move
 from cube import Cube
-from cubie import Cubie
 
 
 def save_state(file_name: str, state: str):
@@ -29,12 +27,12 @@ def scramble(file_name: str, n: int):
     save_state(file_name, cube.get_state())
 
 def main():
-    # parser = argparse.ArgumentParser(description="scramble")
-    # parser.add_argument("--n", type=int, default=20, help="Number of moves")
-    # args = parser.parse_args()
+    parser = argparse.ArgumentParser(description="scramble")
+    parser.add_argument("--n", type=int, default=20, help="Number of moves")
+    args = parser.parse_args()
 
-    # scramble('scramble_state.txt', args.n)
-    load_state('scramble_state.txt')
+    scramble('scramble_state.txt', args.n)
+    # load_state('scramble_state.txt')
 
 if __name__ == "__main__":
     main()

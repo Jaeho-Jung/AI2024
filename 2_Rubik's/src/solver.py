@@ -30,19 +30,16 @@ class Solver:
     def heuristic_summation(self, cube: Cube):
         sum = 0
         for pos in self.positions:
-            sum += self.min_move(cube.cubies[pos], self.goal[pos])
+            sum += self.min_move_table[(cube.cubies[pos].position,cube.cubies[pos].orientation)][(self.goal[pos].position, self.goal[pos].orientation)]
         
         return sum
 
     def heuristic_maximum(self, cube: Cube):
         maximum = 0
         for pos in self.positions:
-            maximum = max(maximum, self.min_move(cube.cubies[pos], self.goal[pos]))
+            maximum = max(maximum, self.self.min_move_table[(cube.cubies[pos].position,cube.cubies[pos].orientation)][(self.goal[pos].position, self.goal[pos].orientation)])
 
-    def min_move(self, start: Cubie, goal: Cubie = 0):
-        if len(self.min_move_table):
-            return self.min_move_table[(start.position, start.orientation)][(goal.position, goal.orientation)]
-        
+    def min_move(self, start: Cubie, goal: Cubie):
         cube = Cube(2)
         start.orientation = (start.orientation - goal.orientation) % 3
         goal.orientation = 0
@@ -119,18 +116,21 @@ class Solver:
     # Solve Rubik's Cube
     def solve(self, cube: Cube):
         with open('solution.txt', 'w+') as f:
-            f.write(self.ida_star(cube, self.heuristic_summation))
-            f.write(self.ida_star(cube, self.heuristic_maximum))
+            f.write(str(self.ida_star(cube, self.heuristic_summation)))
+            f.write('\n')
+            f.write(str(self.ida_star(cube, self.heuristic_maximum)))
     
 
 def main():
     solver = Solver()
     
-    cubies = load_state('scramble_state.txt')
-    cube = Cube(2)
-    cube.set_cubies(cubies)
+    # cubies = load_state('scramble_state.txt')
+    # cube = Cube(2)
+    # cube.set_cubies(cubies)
 
-    solver.solve(cube)
+    # solver.solve(cube)
+
+    print(solver.min_move_table)
 
 if __name__ == "__main__":
     main()

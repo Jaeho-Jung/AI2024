@@ -5,7 +5,6 @@ import numpy as np
 from move import Move
 from cubie import Cubie
 from color import Color
-import cubeparser
 from constants import INIT_FACE_COLOR, INIT_CUBIE_STATE
 
 '''
@@ -50,9 +49,6 @@ class Cube:
         return self.cubies
 
     def do_moves(self, moves: Union[str, List[Move]]):
-        if isinstance(moves, str):
-            moves = cubeparser.scramble_to_moves(moves)
-            
         for move in moves:
             self._rotate(move)
 
@@ -161,10 +157,3 @@ class Cube:
             self._adjacent_face_swap(move.face)
             # rotate cubies
             self._cubie_rotate(move.face)
-
-
-T = TypeVar('T')
-def _transpose(l: List[List[T]]) -> List[List[T]]:
-    return [list(i) for i in zip(*l)]
-
-# cube = Cube(2)
