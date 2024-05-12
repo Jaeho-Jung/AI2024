@@ -1,4 +1,3 @@
-import pygame
 from queue import PriorityQueue
 
 from constants import *
@@ -70,14 +69,15 @@ class Grid:
         frontier.put(Item(0, self.start))
 
         # For node n, came_from[n] is the node immediately preceding it on the cheapest path from the start to n currently known.
-        came_from = [[Location()]*self.m for _ in range(self.n)]
+        came_from = [[Location()]*self.n for _ in range(self.m)]
 
         # For node n, g_score[n] is the cost of the cheapest path from start to n currently known.
-        g_score = [[INF]*self.m for _ in range(self.n)]
+        g_score = [[INF]*self.n for _ in range(self.m)]
         g_score[self.start.r][self.start.c] = 0
+        # print(f'{len(g_score)}, {len(g_score[0])}')
 
         # For node n, f_score[n] := g_score[n] + h(n). f_score[n] represents our current best guess as to how cheap a path could be from start to finish if it goes through n.
-        f_score = [[INF]*self.m for _ in range(self.n)]
+        f_score = [[INF]*self.n for _ in range(self.m)]
         f_score[self.start.r][self.start.c] = h[self.dist_metric](self.start, self.goal)
 
         target = Location()
@@ -99,6 +99,7 @@ class Grid:
                 if self.cell[nxt.r][nxt.c] == Cell.OBSTACLE:
                     continue
 
+                # print(f'{nxt.r}, {nxt.c}')
                 tentative_g_score = g_score[cur.r][cur.c] + 1
                 if tentative_g_score < g_score[nxt.r][nxt.c]:
                     came_from[nxt.r][nxt.c] = cur
