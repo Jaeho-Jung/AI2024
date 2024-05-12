@@ -1,7 +1,6 @@
-import numpy as np
 from enum import IntEnum
 
-INF = np.inf
+INF = float('inf')
 
 class Cell(IntEnum):
     BLANK = 0
