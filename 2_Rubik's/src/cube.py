@@ -4,8 +4,7 @@ import numpy as np
 
 from move import Move
 from cubie import Cubie
-from color import Color, color_to_char
-from piece import Corner, CORNER_TO_URF
+from color import Color
 import cubeparser
 from constants import INIT_FACE_COLOR, INIT_CUBIE_STATE
 
@@ -19,7 +18,7 @@ from constants import INIT_FACE_COLOR, INIT_CUBIE_STATE
         'L': [[O,O],[O,O]],
         'B': [[B,B],[B,B]],
     }
-    cubie = {
+    cubies = {
         'ULB': Cubie('ULB', 0),
         'URB': Cubie('URB', 0),
         'ULF': Cubie('ULF', 0),
@@ -50,23 +49,6 @@ class Cube:
     def get_cubies(self):
         return self.cubies
 
-    def get_color(self, position: str, orientation: int) -> Color:
-        return self.get_corner(position)[orientation]
-
-    def get_corner(self, position: str) -> Corner:
-        moves = cubeparser.scramble_to_moves(CORNER_TO_URF[position])
-
-        self.do_moves(moves)
-        corner = Corner({
-            position[0]: Color(self.faces['U'][-1][-1]), 
-            position[1]: Color(self.faces['R'][0][0]),
-            position[2]: Color(self.faces['F'][0][-1])
-        })
-        inverted_moves = cubeparser.invert_moves(moves)
-        self.do_moves(inverted_moves)
-
-        return corner
-
     def do_moves(self, moves: Union[str, List[Move]]):
         if isinstance(moves, str):
             moves = cubeparser.scramble_to_moves(moves)
@@ -79,7 +61,6 @@ class Cube:
             position: Cubie(position, orientation) for position, orientation in INIT_CUBIE_STATE
         }
         return self.cubies == cubies
-        # return not any(piece_colour != face[0][0] for face in self.faces.values() for row in face for piece_colour in row)
     
     def _generate_face(self, color: Color, size: int) -> np.ndarray:
         return np.array([[color] * size for _ in range(size)])
