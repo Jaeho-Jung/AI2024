@@ -1,0 +1,1 @@
+{'ULB': Cubie(position='DRB', orientation=0), 'URB': Cubie(position='DRF', orientation=2), 'ULF': Cubie(position='DLF', orientation=0), 'URF': Cubie(position='URF', orientation=0), 'DLB': Cubie(position='ULF', orientation=2), 'DRB': Cubie(position='URB', orientation=1), 'DLF': Cubie(position='ULB', orientation=0), 'DRF': Cubie(position='DLB', orientation=1)}

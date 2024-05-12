@@ -6,7 +6,7 @@ from pygame.locals import *
 
 from cube import Cube
 from move import Move
-from scramble.parser import scramble_to_moves, moves_to_scramble
+from cubeparser import scramble_to_moves, moves_to_scramble
 
 HEIGHT = 1024
 WIDTH = 1440

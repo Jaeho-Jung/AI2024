@@ -6,7 +6,7 @@ from move import Move
 from cubie import Cubie
 from color import Color, color_to_char
 from piece import Corner, CORNER_TO_URF
-from scramble import parser
+import cubeparser
 from constants import INIT_FACE_COLOR, INIT_CUBIE_STATE
 
 '''
@@ -41,17 +41,20 @@ class Cube:
             position: Cubie(position, orientation) for position, orientation in INIT_CUBIE_STATE
         }
     
+    def set_cubies(self, cubies):
+        self.cubies = cubies
+
     def get_state(self) -> str:
-        return ''.join(color_to_char[color] for face in self.faces.values() for row in face for color in row)
-    
-    def get_cubies(self) -> str:
+        return str(self.cubies)
+
+    def get_cubies(self):
         return self.cubies
 
     def get_color(self, position: str, orientation: int) -> Color:
         return self.get_corner(position)[orientation]
 
     def get_corner(self, position: str) -> Corner:
-        moves = parser.scramble_to_moves(CORNER_TO_URF[position])
+        moves = cubeparser.scramble_to_moves(CORNER_TO_URF[position])
 
         self.do_moves(moves)
         corner = Corner({
@@ -59,20 +62,24 @@ class Cube:
             position[1]: Color(self.faces['R'][0][0]),
             position[2]: Color(self.faces['F'][0][-1])
         })
-        inverted_moves = parser.invert_moves(moves)
+        inverted_moves = cubeparser.invert_moves(moves)
         self.do_moves(inverted_moves)
 
         return corner
 
     def do_moves(self, moves: Union[str, List[Move]]):
         if isinstance(moves, str):
-            moves = parser.scramble_to_moves(moves)
+            moves = cubeparser.scramble_to_moves(moves)
             
         for move in moves:
             self._rotate(move)
 
     def is_solved(self) -> bool:
-        return not any(piece_colour != face[0][0] for face in self.faces.values() for row in face for piece_colour in row)
+        cubies = {
+            position: Cubie(position, orientation) for position, orientation in INIT_CUBIE_STATE
+        }
+        return self.cubies == cubies
+        # return not any(piece_colour != face[0][0] for face in self.faces.values() for row in face for piece_colour in row)
     
     def _generate_face(self, color: Color, size: int) -> np.ndarray:
         return np.array([[color] * size for _ in range(size)])
@@ -179,4 +186,4 @@ T = TypeVar('T')
 def _transpose(l: List[List[T]]) -> List[List[T]]:
     return [list(i) for i in zip(*l)]
 
-cube = Cube(2)
+# cube = Cube(2)
