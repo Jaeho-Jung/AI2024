@@ -47,6 +47,9 @@ class Grid:
                 self.cell[i][j] = int(obstacles[idx])
                 idx += 1
 
+    def get_dist_metric(self):
+        return self.dist_metric
+
     def toggle_dist_metric(self):
         if self.dist_metric == Distance.EUCLIDEAN:
             self.dist_metric = Distance.MANHATTAN

@@ -1,12 +1,11 @@
-from pprint import pprint
-
 import pygame
 from pygame.locals import *
+
 from grid import Grid
 from utils import Location
-from constants import Cell, Color
+from constants import Cell, Color, Distance
 
-WINDOW_WIDTH, WINDOW_HEIGHT = 700, 700
+WINDOW_WIDTH, WINDOW_HEIGHT = 600, 600
 GRID_WIDTH, GRID_HEIGHT = 600, 600
 
 class Gui:
@@ -21,6 +20,8 @@ class Gui:
     def run(self):
         self.draw_grid()
         self.draw_cells()
+
+        print(f'Distance metric: {Distance(self.grid.get_dist_metric()).name}')
 
         running = True
         while running:
@@ -40,6 +41,7 @@ class Gui:
                         self.grid.set_obstacles_randomly()
                         self.draw_cells()
                     if key == 'return':
+                        self.grid.clear_path()
                         self.start_search()
                         self.draw_cells()
                         pass
@@ -51,6 +53,7 @@ class Gui:
                     elif key == 'm':
                         self.grid.clear_path()
                         self.grid.toggle_dist_metric()
+                        print(f'Distance metric: {Distance(self.grid.get_dist_metric()).name}')
                         self.draw_cells()
         
         pygame.quit()

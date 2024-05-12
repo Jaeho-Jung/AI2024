@@ -21,4 +21,3 @@ class Color():
 class Distance(IntEnum):
     MANHATTAN = 0,
     EUCLIDEAN = 1
-
