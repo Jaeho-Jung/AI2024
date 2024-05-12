@@ -37,7 +37,7 @@ class Solver:
     def heuristic_maximum(self, cube: Cube):
         maximum = 0
         for pos in self.positions:
-            maximum = max(maximum, self.self.min_move_table[(cube.cubies[pos].position,cube.cubies[pos].orientation)][(self.goal[pos].position, self.goal[pos].orientation)])
+            maximum = max(maximum, self.min_move_table[(cube.cubies[pos].position,cube.cubies[pos].orientation)][(self.goal[pos].position, self.goal[pos].orientation)])
 
     def min_move(self, start: Cubie, goal: Cubie):
         cube = Cube(2)
@@ -124,13 +124,11 @@ class Solver:
 def main():
     solver = Solver()
     
-    # cubies = load_state('scramble_state.txt')
-    # cube = Cube(2)
-    # cube.set_cubies(cubies)
+    cubies = load_state('scramble_state.txt')
+    cube = Cube(2)
+    cube.set_cubies(cubies)
 
-    # solver.solve(cube)
-
-    print(solver.min_move_table)
+    solver.solve(cube)
 
 if __name__ == "__main__":
     main()

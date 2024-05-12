@@ -4,7 +4,7 @@ import random
 
 from move import Move
 from cube import Cube
-
+from cubie import Cubie
 
 def save_state(file_name: str, state: str):
     with open(file_name, 'w+') as f:
