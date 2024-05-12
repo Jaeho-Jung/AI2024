@@ -39,6 +39,8 @@ class Solver:
         for pos in self.positions:
             maximum = max(maximum, self.min_move_table[(cube.cubies[pos].position,cube.cubies[pos].orientation)][(self.goal[pos].position, self.goal[pos].orientation)])
 
+        return maximum
+
     def min_move(self, start: Cubie, goal: Cubie):
         cube = Cube(2)
         start.orientation = (start.orientation - goal.orientation) % 3
