@@ -15,17 +15,17 @@ class LinearRegression():
 
     def fit(self, X, y):
         # Initialize
-        # d: number of features
-        # n: number of samples
-        d, n = X.shape
-        self.w = np.zeros(d)
+        # n_features: number of features
+        # n_samples: number of samples
+        n_features, n_samples = X.shape
+        self.w = np.zeros(n_features)
         self.b = 0
-        self.batch_size = min(self.batch_size, n)
+        self.batch_size = min(self.batch_size, n_samples)
         
         # Split the data into training and validation sets if early stopping is enabled
         if self.early_stopping:
-            val_size = int(self.validation_fraction * n)
-            indices = np.random.permutation(n)
+            val_size = int(self.validation_fraction * n_samples)
+            indices = np.random.permutation(n_samples)
             X_train, y_train = X[:,indices[val_size:]], y[indices[val_size:]]
             X_val,   y_val   = X[:,indices[:val_size]], y[indices[:val_size]]
         else:
