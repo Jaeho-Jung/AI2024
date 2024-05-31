@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class LinearRegression():
     def __init__(self, alpha=1e-4, max_iter=1000, tol=1e-3, early_stopping=False, validation_fraction=0.1, n_iter_no_change=5, batch_size=200):
         self.alpha = alpha
@@ -57,8 +58,8 @@ class LinearRegression():
                 self.w -= self.alpha * dw
                 self.b -= self.alpha * db
 
-                 # Print status after each batch
-                print(f"Iteration {epoch + 1}/{self.max_iter}, Batch {i//self.batch_size + 1}/{int(np.ceil(X.shape[1] / self.batch_size))}: Loss = {np.mean(error ** 2)}")
+            # Print status
+            print(f"Iteration {epoch + 1}/{self.max_iter}: Loss = {np.mean(error ** 2)}")
             
             # Early stopping check
             if self.early_stopping:
