@@ -69,12 +69,12 @@ class LogisticRegression():
         for epoch in range(self.max_iter):
             # Shuffle the data
             permutation = np.random.permutation(X_train.shape[1])
-            X_train_shuffled = X_train[:,permutation]
+            X_train_shuffled = X_train[:, permutation]
             y_train_shuffled = y_train[permutation]
 
             # Mini-batch gradient descent
             for i in range(0, X_train.shape[1], self.batch_size):
-                X_batch = X_train_shuffled[:,i:i + self.batch_size]
+                X_batch = X_train_shuffled[:, i:i + self.batch_size]
                 y_batch = y_train_shuffled[i:i + self.batch_size]
                 
                 # Compute predictions
