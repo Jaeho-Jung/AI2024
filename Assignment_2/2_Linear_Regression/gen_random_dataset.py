@@ -14,8 +14,6 @@ def gen_random_dataset(N, d, R=10, alpha=0.1):
     return X, y
 
 def split_dataset(X, y, train_ratio=0.85, dev_ratio=0.05, test_ratio=0.1):
-    assert train_ratio + dev_ratio + test_ratio == 1, "The sum of the ratios must be 1"
-    
     N = X.shape[1]
     indices = np.random.permutation(N)
     
@@ -36,18 +34,11 @@ def save_dataset(filename, *datasets):
     with open(filename, 'wb') as f:
         pickle.dump(datasets, f)
 
-
 if __name__ == "__main__":
-    Ns = [1000, 10000, 100000]
-    i = 1
-    for N in Ns:
-        X, y = gen_random_dataset(N, 10)
-        # print(X.shape)
-        # print(X)
-        # print()
-        # print(y.shape)
-        # print(y)
+    N = [1000, 10000, 100000]
+
+    for i in range(len(N)):
+        X, y = gen_random_dataset(N[i], 10)
         train_set, dev_set, test_set = split_dataset(X, y)
         
         save_dataset(f'myrandomdataset{i}.pkl', train_set, dev_set, test_set)
-        i += 1

@@ -4,3 +4,6 @@ tempCodeRunnerFile.py
 *.log
 test.py
 *.pkl
+.ipynb_checkpoints/
+.virtual_documents/
+report/

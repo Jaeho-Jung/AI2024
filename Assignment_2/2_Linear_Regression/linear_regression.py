@@ -2,7 +2,7 @@ import numpy as np
 
 
 class LinearRegression():
-    def __init__(self, alpha=1e-4, max_iter=1000, tol=1e-3, early_stopping=False, validation_fraction=0.1, n_iter_no_change=5, batch_size=200):
+    def __init__(self, alpha=1e-2, max_iter=100, tol=1e-3, early_stopping=True, validation_fraction=0.1, n_iter_no_change=5, batch_size=100):
         self.alpha = alpha
         self.max_iter = max_iter
         self.tol = tol
@@ -14,16 +14,29 @@ class LinearRegression():
         self.w = None
         self.b = None
 
+    def _initialize_parameters(self, d):
+        self.w = np.zeros(d)
+        self.b = 0
+
+    def _compute_loss(self, X, y):
+        y_pred = np.dot(self.w.T, X) + self.b
+        error = y_pred - y
+        loss = np.mean(error**2)
+        return loss
+
     def fit(self, X, y):
         # Initialize
         # n_features: number of features
         # n_samples: number of samples
         n_features, n_samples = X.shape
-        self.w = np.zeros(n_features)
-        self.b = 0
-        self.batch_size = min(self.batch_size, n_samples)
+        self._initialize_parameters(n_features)
         
-        # Split the data into training and validation sets if early stopping is enabled
+        self.batch_size = min(self.batch_size, n_samples)
+
+        best_loss = np.inf
+        no_improvement_count = 0
+        
+        # Split the data
         if self.early_stopping:
             val_size = int(self.validation_fraction * n_samples)
             indices = np.random.permutation(n_samples)
@@ -31,9 +44,6 @@ class LinearRegression():
             X_val,   y_val   = X[:,indices[:val_size]], y[indices[:val_size]]
         else:
             X_train, y_train = X, y
-
-        best_loss = np.inf
-        no_improvement_count = 0
         
         for epoch in range(self.max_iter):
             # Shuffle the data
@@ -51,43 +61,34 @@ class LinearRegression():
                 error = y_pred - y_batch
                 
                 # Compute gradients
-                dw = (2 / len(y_batch)) * np.dot(error, X_batch.T)
-                db = (2 / len(y_batch)) * np.sum(error)
+                dw = 2 * np.dot(error, X_batch.T) / len(y_batch)
+                db = 2 * np.sum(error) / len(y_batch)
                 
-                # Update weights
-                self.w -= self.alpha * dw
+                # Update weights, biases
+                self.w -= self.alpha * dw   
                 self.b -= self.alpha * db
 
             # Print status
-            print(f"Iteration {epoch + 1}/{self.max_iter}: Loss = {np.mean(error ** 2)}")
-            
-            # Early stopping check
+            train_loss = self._compute_loss(X_train, y_train)
+            print(f"Iteration {epoch + 1}/{self.max_iter}: Training Loss = {train_loss}")
+
+            # Early stopping
             if self.early_stopping:
-                y_val_pred = np.dot(self.w.T, X_val) + self.b
-                val_loss = np.mean((y_val_pred - y_val) ** 2)
+                val_loss = self._compute_loss(X_val, y_val)
+                print(f"Validation Loss = {train_loss}")
                 
-                if val_loss > best_loss - self.tol:
-                    no_improvement_count += 1
-                else:
+                if val_loss < best_loss - self.tol:
                     best_loss = val_loss
                     no_improvement_count = 0
+                else:
+                    no_improvement_count += 1
                 
                 if no_improvement_count >= self.n_iter_no_change:
-                    print(f"Early stopping at epoch {epoch}")
+                    print(f"Early stopping at epoch {epoch + 1}")
                     break
-            
-            # TODO: 이거 필요한가?
-            # Check for convergence
-            if np.linalg.norm(dw) < self.tol and np.abs(db) < self.tol:
-                print(f"Converged at epoch {epoch}")
-                break
 
         print(f"Training finished after {epoch + 1} iterations")
 
-# Example usage:
-from gen_random_dataset import gen_random_dataset
-
-X, y = gen_random_dataset(1000, 10)
-
-model = LinearRegression(alpha=0.0001, max_iter=1000, early_stopping=True)
-model.fit(X, y)
+    def predict(self, X):
+        y_pred = np.dot(self.w.T, X) + self.b
+        return y_pred

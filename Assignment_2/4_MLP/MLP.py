@@ -15,6 +15,21 @@ class MLP():
         self.W = []
         self.b = [] 
 
+    def _initialize_parameters(self, d, k):
+        self.W = []
+        self.b = []
+
+        # Initialize weights and biases for hidden layers
+        prev_size = d
+        for size in self.hidden_sizes:
+            self.W.append(np.random.randn(size, prev_size) * np.sqrt(2 / prev_size))
+            self.b.append(np.zeros(size))
+            prev_size = size
+
+        # Initialize weights and biases for output layer
+        self.W.append(np.random.randn(k, prev_size) * np.sqrt(2 / prev_size))
+        self.b.append(np.zeros(k))
+
     def softmax(self, z):
         exp_z = np.exp(z - np.max(z, axis=0))
         ret = exp_z / np.sum(exp_z, axis=0)
@@ -43,32 +58,28 @@ class MLP():
         return loss
 
     def _compute_accuracy(self, X, y):
-        h = X
-        for i in range(len(self.W) - 1):
-            z = np.dot(self.W[i], h) + self.b[i][:, np.newaxis]
-            h = self.relu(z)
-        o = np.dot(self.W[-1], h) + self.b[-1][:, np.newaxis]
-        probs = self.softmax(o)
-        predictions = np.argmax(probs, axis=0)
+        predictions = self.predict(X)
         accuracy = np.mean(predictions == y)
         return accuracy
 
     def _forward_pass(self, X):
         activations = [X]
-        for i in range(len(self.W) - 1):
+        L = len(self.W)
+        for i in range(L):
             z = np.dot(self.W[i], activations[-1]) + self.b[i][:, np.newaxis]
-            h = self.relu(z)
+            if i == L-1:  # output layer
+                h = self.softmax(z)
+            else:
+                h = self.relu(z)
             activations.append(h)
-        # Output layer without ReLU
-        o = np.dot(self.W[-1], activations[-1]) + self.b[-1][:, np.newaxis]
-        activations.append(o)
+
         return activations
 
     def _backward_pass(self, X, y, activations):
         grads_W = [np.zeros_like(w) for w in self.W]
         grads_b = [np.zeros_like(b) for b in self.b]
 
-        probs = self.softmax(activations[-1])
+        probs = activations[-1]
         y_one_hot = self.one_hot_encode(y)
         delta = probs - y_one_hot
         for i in range(len(self.W) - 1, -1, -1):
@@ -79,6 +90,16 @@ class MLP():
 
         return grads_W, grads_b
 
+    def predict(self, X):
+        h = X
+        for i in range(len(self.W) - 1):
+            z = np.dot(self.W[i], h) + self.b[i][:, np.newaxis]
+            h = self.relu(z)
+        o = np.dot(self.W[-1], h) + self.b[-1][:, np.newaxis]
+        probs = self.softmax(o)
+        predictions = np.argmax(probs, axis=0)
+        return predictions
+
     def fit(self, X, y):
         # Initialize
         # n_features: number of features
@@ -87,21 +108,11 @@ class MLP():
         n_features, n_samples = X.shape
         n_classes = int(np.max(y)) + 1
 
-        self.W = []
-        self.b = []
-
-        # Initialize weights and biases for hidden layers
-        prev_size = n_features
-        for size in self.hidden_sizes:
-            self.W.append(np.random.randn(size, prev_size) * np.sqrt(2 / prev_size))
-            self.b.append(np.zeros(size))
-            prev_size = size
-
-        # Initialize weights and biases for output layer
-        self.W.append(np.random.randn(n_classes, prev_size) * np.sqrt(2 / prev_size))
-        self.b.append(np.zeros(n_classes))
-
+        self._initialize_parameters(n_features, n_classes)
         self.batch_size = min(self.batch_size, n_samples)
+
+        best_loss = np.inf
+        no_improvement_count = 0
 
         if self.early_stopping:
             val_size = int(self.validation_fraction * n_samples)
@@ -110,9 +121,6 @@ class MLP():
             X_val,   y_val   = X[:, indices[:val_size]], y[indices[:val_size]]
         else:
             X_train, y_train = X, y
-
-        best_loss = np.inf
-        no_improvement_count = 0
 
         for epoch in range(self.max_iter):
             # Shuffle the data
@@ -137,7 +145,7 @@ class MLP():
 
             train_loss = self._compute_loss(X_train, y_train)
             train_accuracy = self._compute_accuracy(X_train, y_train)
-            print(f"Iteration {epoch + 1}/{self.max_iter}: Loss = {train_loss}, Training Accuracy = {train_accuracy}")
+            print(f"Iteration {epoch + 1}/{self.max_iter}: Training Loss = {train_loss}, Training Accuracy = {train_accuracy}")
 
             if self.early_stopping:
                 val_loss = self._compute_loss(X_val, y_val)
@@ -153,15 +161,6 @@ class MLP():
                 if no_improvement_count >= self.n_iter_no_change:
                     print(f"Early stopping at epoch {epoch}")
                     break
-
-            grad_norm = np.linalg.norm(grads_W[-1])
-            grad_norm += np.linalg.norm(grads_b[-1])
-            for i in range(len(grads_W) - 1):
-                grad_norm += np.linalg.norm(grads_W[i])
-                grad_norm += np.linalg.norm(grads_b[i])
-            if grad_norm < self.tol:
-                print(f"Converged at epoch {epoch}")
-                break
 
         print(f"Training finished after {epoch + 1} iterations")
 

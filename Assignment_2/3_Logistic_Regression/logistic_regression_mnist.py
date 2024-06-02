@@ -15,5 +15,5 @@ X -= X.mean(axis=0)
 
 y = y.astype(np.int16)
 
-model = LogisticRegression(alpha=0.0001, max_iter=1000, early_stopping=True)
+model = LogisticRegression(alpha=0.001, max_iter=100, early_stopping=True)
 model.fit(X.T, y)

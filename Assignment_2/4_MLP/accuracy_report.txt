@@ -1,0 +1,4 @@
+Model with 1 layers accuracy: 0.8979285714285714
+Model with 2 layers accuracy: 0.9097857142857143
+Model with 3 layers accuracy: 0.9178571428571428
+Model with 4 layers accuracy: 0.9259285714285714
